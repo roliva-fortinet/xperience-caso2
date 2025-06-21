@@ -43,7 +43,7 @@ jobs:
           echo "EXIT_FLAG=CRITICAL=1" >> env.list
 
       - name: Run Lacework IaC Scan
-        rrun: |
+        run: |
           docker run --rm \
             -e LW_ACCOUNT=${{ secrets.LW_ACCOUNT }} \
             -e LW_API_KEY=${{ secrets.LW_API_KEY }} \
