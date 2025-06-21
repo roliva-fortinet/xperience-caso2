@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v4
+        uses: hashicorp/setup-terraform@v3
 
       - name: Test Tools
         run: |
@@ -47,7 +47,7 @@ jobs:
           docker run --env-file env.list -v "$(pwd):/app/src" -w /app/src lacework/codesec-iac:latest lacework iac scan
           
       - name: Upload Scan Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Lacework IaC Reports
           path: |
