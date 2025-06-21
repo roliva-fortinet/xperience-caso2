@@ -43,8 +43,7 @@ jobs:
           echo "EXIT_FLAG=CRITICAL=1" >> env.list
 
       - name: Run Lacework IaC Scan
-        run: |
-          mkdir -p lacework-reports
+        rrun: |
           docker run --rm \
             -e LW_ACCOUNT=${{ secrets.LW_ACCOUNT }} \
             -e LW_API_KEY=${{ secrets.LW_API_KEY }} \
@@ -52,10 +51,7 @@ jobs:
             -v "$PWD:/workdir" \
             -w /workdir \
             lacework/codesec-iac \
-            lacework iac scan \
-              --directory /workdir \
-              --output json \
-              --output-path /workdir/lacework-reports/scan.json
+            lacework iac scan --directory /workdir
           
       - name: Upload Scan Reports
         uses: actions/upload-artifact@v4
