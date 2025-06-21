@@ -34,59 +34,45 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Create environment variables file
+      - name: Install Lacework CLI
         run: |
-          env | grep "GITHUB_\\|LW_\\|CI_" > env.list
-          echo "LW_ACCOUNT=${{ secrets.LW_ACCOUNT }}" >> env.list
-          echo "LW_API_KEY=${{ secrets.LW_API_KEY }}" >> env.list
-          echo "LW_API_SECRET=${{ secrets.LW_API_SECRET }}" >> env.list
+          curl https://raw.githubusercontent.com/lacework/go-sdk/main/cli/install.sh | bash
+          echo "$HOME/.lacework/bin" >> $GITHUB_PATH
+
+      - name: Configure Lacework CLI environment variables
+        run: |
+          lacework configure set account ${{ secrets.LW_ACCOUNT }}
+          lacework configure set access_key ${{ secrets.LW_API_KEY }}
+          lacework configure set secret_key ${{ secrets.LW_API_SECRET }}
 
       - name: Run Lacework IaC Scan
         run: |
-          mkdir -p /tmp/iac_reports
-          docker run --rm \
-            --env-file env.list \
-            -v "$PWD:/workdir" \
-            -w /workdir \
-            lacework/codesec-iac \
-            lacework iac scan --directory /workdir --sarif --output-path /tmp/iac_reports/results.sarif
-
-
-
-      - name: Upload Scan Reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: Lacework IaC Reports
-          path: /tmp/iac_reports/*
+          lacework iac scan \
+            --directory . \
+            --output json \
+            --output-path scan.json
 
       - name: Fail if Critical Findings Found
         run: |
-          RESULTS_JSON="/tmp/iac_reports/scan.json"
-          if [ -f "$RESULTS_JSON" ]; then
-            CRITICALS=$(jq '[.[].findings[] | select(.severity == "Critical")] | length' "$RESULTS_JSON")
-            echo "🔎 Critical findings: $CRITICALS"
-            if [ "$CRITICALS" -gt 0 ]; then
-              echo "🚨 Found critical IaC issues. Failing the job."
-              exit 1
-            else
-              echo "✅ No critical issues found. Continuing..."
-            fi
-          else
-            echo "❌ No scan.json found, cannot evaluate findings."
+          CRITICALS=$(jq '[.[].findings[] | select(.severity == "Critical")] | length' scan.json)
+          echo "🔎 Critical findings: $CRITICALS"
+          if [ "$CRITICALS" -gt 0 ]; then
+            echo "🚨 Found critical IaC issues. Failing the job."
             exit 1
           fi
 
+      - name: Upload Scan Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lacework IaC Report
+          path: scan.json
+
       - name: Publish IaC Scan Summary
         run: |
-          RESULTS_JSON="/tmp/iac_reports/scan.json"
-          if [ -f "$RESULTS_JSON" ]; then
-            TESTS=$(jq -r '.[].findings | length' "$RESULTS_JSON")
-            PASSED=$(jq -r '.[].findings | map(select(.pass == true)) | length' "$RESULTS_JSON")
-            FAILED=$(jq -r '.[].findings | map(select(.pass == false)) | length' "$RESULTS_JSON")
-            echo "<table><tr><th>Total</th><th>Passed ✅</th><th>Failed ❌</th></tr><tr><td>${TESTS}</td><td>${PASSED}</td><td>${FAILED}</td></tr></table>" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "⚠️ No scan results found to summarize." >> $GITHUB_STEP_SUMMARY
-          fi
+          TESTS=$(jq -r '.[].findings | length' scan.json)
+          PASSED=$(jq -r '.[].findings | map(select(.pass == true)) | length' scan.json)
+          FAILED=$(jq -r '.[].findings | map(select(.pass == false)) | length' scan.json)
+          echo "<table><tr><th>Total</th><th>Passed ✅</th><th>Failed ❌</th></tr><tr><td>${TESTS}</td><td>${PASSED}</td><td>${FAILED}</td></tr></table>" >> $GITHUB_STEP_SUMMARY
 
   Terraform-Deploy:
     name: Terraform Deploy
@@ -108,6 +94,6 @@ jobs:
         run: |
           terraform init
           terraform plan -out=plan.tfplan
-          
+
       - name: Terraform Apply
         run: terraform apply --auto-approve plan.tfplan
