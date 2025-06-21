@@ -49,7 +49,8 @@ jobs:
             -v "$PWD:/workdir" \
             -w /workdir \
             lacework/codesec-iac \
-            lacework iac scan --directory /workdir --html --output-path /tmp/iac_reports/report.html
+            lacework iac scan --directory /workdir --sarif --output-path /tmp/iac_reports/results.sarif
+
 
 
       - name: Upload Scan Reports
