@@ -44,13 +44,18 @@ jobs:
 
       - name: Run Lacework IaC Scan
         run: |
+          mkdir -p lacework-reports
           docker run --rm \
             -e LW_ACCOUNT=${{ secrets.LW_ACCOUNT }} \
             -e LW_API_KEY=${{ secrets.LW_API_KEY }} \
             -e LW_API_SECRET=${{ secrets.LW_API_SECRET }} \
             -v "$PWD:/workdir" \
+            -w /workdir \
             lacework/codesec-iac \
-            lacework iac scan --directory /workdir
+            lacework iac scan \
+              --directory /workdir \
+              --output json \
+              --output-path /workdir/lacework-reports/scan.json
           
       - name: Upload Scan Reports
         uses: actions/upload-artifact@v4
