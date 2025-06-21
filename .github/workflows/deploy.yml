@@ -18,6 +18,9 @@ jobs:
     name: Initialize Tools
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
       - name: Test Tools
         run: |
           aws --version
