@@ -1,0 +1,50 @@
+name: Deploy EC2 with Apache and Lacework IaC Scan
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Lacework CLI
+        run: |
+          curl https://raw.githubusercontent.com/lacework/go-sdk/main/cli/install.sh | bash
+          sudo mv lacework /usr/local/bin/
+
+      - name: Configure Lacework CLI
+        run: |
+          lacework configure --noninteractive \
+            --account ${{ secrets.LACEWORK_ACCOUNT }} \
+            --api_key ${{ secrets.LACEWORK_API_KEY }} \
+            --api_secret ${{ secrets.LACEWORK_API_SECRET }}
+
+      - name: Lacework IaC Scan (fail on high+ severity)
+        run: |
+          lacework iac scan . --severity-threshold high
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        run: terraform plan
+
+      - name: Terraform Apply
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        run: terraform apply -auto-approve
