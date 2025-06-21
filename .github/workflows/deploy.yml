@@ -43,15 +43,15 @@ jobs:
           echo "EXIT_FLAG=CRITICAL=1" >> env.list
 
       - name: Run Lacework IaC Scan
-        env:
-          SCAN_COMMAND: tf-scan
         run: |
           docker run \
-            --env-file env.list \
-            -e SCAN_COMMAND=tf-scan \
-            -v "$(pwd):/app/src" \
-            -w /app/src \
-            lacework/codesec-iac:latest entrypoint.sh
+            --env LW_ACCOUNT=${{ secrets.LW_ACCOUNT }} \
+            --env LW_API_KEY=${{ secrets.LW_API_KEY }} \
+            --env LW_API_SECRET=${{ secrets.LW_API_SECRET }} \
+            -v "$(pwd):/app" \
+            -w /app \
+            lacework/codesec-iac:latest \
+            lacework iac scan --directory .
           
       - name: Upload Scan Reports
         uses: actions/upload-artifact@v4
