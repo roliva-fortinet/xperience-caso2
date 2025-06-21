@@ -72,26 +72,26 @@ jobs:
         run: |
           echo "Summary not available because JSON reports are not generated with current docker CLI."
 
-Terraform-Deploy:
-    name: Terraform Deploy
-    needs: Lacework-Scanner
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+  Terraform-Deploy:
+      name: Terraform Deploy
+      needs: Lacework-Scanner
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+        - name: Configure AWS Credentials
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+            aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Terraform Init & Plan
-        run: |
-          terraform init
-          terraform plan -out=plan.tfplan
-          
-      - name: Terraform Apply
-        run: terraform apply --auto-approve plan.tfplan
+        - name: Terraform Init & Plan
+          run: |
+            terraform init
+            terraform plan -out=plan.tfplan
+            
+        - name: Terraform Apply
+          run: terraform apply --auto-approve plan.tfplan
