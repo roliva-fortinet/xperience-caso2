@@ -42,8 +42,8 @@ jobs:
           echo "LW_API_SECRET=${{ secrets.LW_API_SECRET }}" >> env.list
 
       - name: Run Lacework IaC Scan and fail on Critical findings
-          id: scan
-          run: |
+        id: scan
+        run: |
             set -o pipefail
             OUTPUT=$(docker run --rm \
               --env-file env.list \
