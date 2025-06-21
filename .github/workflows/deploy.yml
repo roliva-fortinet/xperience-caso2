@@ -66,7 +66,7 @@ jobs:
           TESTS=$(jq -r '.[].findings | .[].pass' "$RESULTS_JSON" | wc -l)
           PASSED=$(jq -r '.[].findings | .[].pass' "$RESULTS_JSON" | grep true | wc -l)
           FAILED=$(jq -r '.[].findings | .[].pass' "$RESULTS_JSON" | grep false | wc -l)
-          echo "<table><tr><th>Tests</th><th>Passed ✅</th><th>Failed ❌</th></tr><tr><td>Lacework IaC Scan</td><td>${TESTS}</td><td>${PASSED}</td><td>${FAILED}</td></tr></table>" >> $GITHUB_STEP_SUMMARY
+          echo "<table><tr><th>Tests</th><th>Passed ✅</th><th>Fallida ❌</th></tr><tr><td>Lacework IaC Scan</td><td>${TESTS}</td><td>${PASSED}</td><td>${FAILED}</td></tr></table>" >> $GITHUB_STEP_SUMMARY
 
   Terraform-Deploy:
     name: Terraform Deploy
