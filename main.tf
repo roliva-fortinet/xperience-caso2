@@ -26,7 +26,7 @@ resource "aws_security_group" "allow_http" {
   }
 
   ingress {
-    from_port   = 22
+    from_port   = 23
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
