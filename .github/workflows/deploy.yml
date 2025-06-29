@@ -1,4 +1,4 @@
-name: Deploy EC2 with Apache + Lacework IaC Scan
+name: Pipeline Interno Pre-Produccion
 
 on:
   push:
