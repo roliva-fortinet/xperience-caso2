@@ -45,7 +45,7 @@ resource "aws_instance" "apache_server" {
   instance_type               = "t2.micro"
   subnet_id                   = var.subnet_id
   vpc_security_group_ids      = [aws_security_group.allow_http.id]
-  associate_public_ip_address = false
+  associate_public_ip_address = true
 
   user_data = <<-EOF
               #!/bin/bash
