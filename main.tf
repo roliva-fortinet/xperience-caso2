@@ -19,20 +19,13 @@ variable "private_ip" {
 }
 
 resource "aws_security_group" "allow_http" {
-  name        = "allow_http"
-  description = "Permite tráfico HTTP y SSH"
+  name        = "Apache Devops"
+  description = "Permite trafico HTTP"
   vpc_id      = var.vpc_id
 
   ingress {
     from_port   = 80
     to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -48,6 +41,7 @@ resource "aws_security_group" "allow_http" {
 resource "aws_instance" "apache_server" {
   ami                         = "ami-0c02fb55956c7d316" # Amazon Linux 4
   instance_type               = "t2.micro"
+  name                        = "Apache Devops"
   subnet_id                   = var.subnet_id
   vpc_security_group_ids      = [aws_security_group.allow_http.id]
   private_ip                  = var.private_ip
@@ -66,5 +60,5 @@ resource "aws_instance" "apache_server" {
     Name = "ApacheServer"
   }
 
-  key_name = "mi-par-claves" # cambia esto por el nombre real de tu key pair1
+  key_name = "xperience?cloud" # cambia esto por el nombre real de tu key pair1
 }
