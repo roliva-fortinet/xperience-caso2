@@ -50,7 +50,7 @@ jobs:
               -v "$PWD:/workdir" \
               -w /workdir \
               lacework/codesec-iac \
-              lacework iac scan --directory /workdir 2>&1)
+              lacework iac scan --directory /workdir --include-all 2>&1)
 
             echo "=== BEGIN SCAN OUTPUT ==="
             echo "$OUTPUT"
