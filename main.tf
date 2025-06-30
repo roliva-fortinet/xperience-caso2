@@ -41,7 +41,6 @@ resource "aws_security_group" "allow_http" {
 resource "aws_instance" "apache_server" {
   ami                         = "ami-0c02fb55956c7d316" # Amazon Linux 4
   instance_type               = "t2.micro"
-  name                        = "Apache Devops"
   subnet_id                   = var.subnet_id
   vpc_security_group_ids      = [aws_security_group.allow_http.id]
   private_ip                  = var.private_ip
