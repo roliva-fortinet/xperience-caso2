@@ -59,5 +59,5 @@ resource "aws_instance" "apache_server" {
     Name = "ApacheServer"
   }
 
-  key_name = "xperience?cloud" # cambia esto por el nombre real de tu key pair1
+  key_name = "xperience_cloud" # cambia esto por el nombre real de tu key pair1
 }
