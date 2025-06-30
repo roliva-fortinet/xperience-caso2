@@ -14,7 +14,7 @@ variable "subnet_id" {
 }
 
 variable "private_ip" {
-  description = "Private IP address for the Apache EC2 instance"
+  description = "Private IP address for the Apache EC2 instance1"
   type        = string
 }
 
