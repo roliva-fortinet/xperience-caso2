@@ -13,6 +13,11 @@ variable "subnet_id" {
   type        = string
 }
 
+variable "private_ip" {
+  description = "Private IP address for the Apache EC2 instance"
+  type        = string
+}
+
 resource "aws_security_group" "allow_http" {
   name        = "allow_http"
   description = "Permite tráfico HTTP y SSH"
@@ -45,6 +50,7 @@ resource "aws_instance" "apache_server" {
   instance_type               = "t2.micro"
   subnet_id                   = var.subnet_id
   vpc_security_group_ids      = [aws_security_group.allow_http.id]
+  private_ip                  = var.private_ip
   associate_public_ip_address = false
 
   user_data = <<-EOF
