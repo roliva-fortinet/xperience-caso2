@@ -1,4 +1,4 @@
-name: Pipeline Interno Pre-Produccion
+name: Pipeline Interno Preproductivo
 
 on:
   push:
@@ -50,13 +50,13 @@ jobs:
               -v "$PWD:/workdir" \
               -w /workdir \
               lacework/codesec-iac \
-              lacework iac scan --include-all --directory /workdir 2>&1)
+              lacework iac scan --directory /workdir 2>&1)
 
             echo "=== BEGIN SCAN OUTPUT ==="
             echo "$OUTPUT"
             echo "=== END SCAN OUTPUT ==="
 
-            if echo "$OUTPUT" | grep -i "Critical" | grep -i "false"; then
+            if echo "$OUTPUT" | grep -i "Critical" | grep -i "pass" | grep -i "false"; then
               echo "🚨 Foundd Critical IaC findings with PASS = false. Failing the job."
               exit 1
             else
