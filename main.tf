@@ -60,5 +60,5 @@ resource "aws_instance" "apache_server" {
     Name = "ApacheServer"
   }
 
-  key_name = "mi-par-claves" # cambia esto por el nombre real de tu key pair
+  key_name = "mi-par-claves" # cambia esto por el nombre real de tu key pair1
 }
