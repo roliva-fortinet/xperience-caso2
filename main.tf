@@ -44,7 +44,7 @@ resource "aws_instance" "apache_server" {
   subnet_id                   = var.subnet_id
   vpc_security_group_ids      = [aws_security_group.allow_http.id]
   private_ip                  = var.private_ip
-  associate_public_ip_address = true   # Aqui va el cambio de true a false 1
+  associate_public_ip_address = false   # Aqui va el cambio de true a false 1
 
   user_data = <<-EOF
               #!/bin/bash
